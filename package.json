@@ -1,0 +1,17 @@
+{
+  "name": "anchr-authserver",
+  "version": "0.0.1",
+  "description": "kompass server using Mongoose",
+  "main": "authService.js",
+  "scripts": {
+    "start": "node authService.js"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "method-override": "^3.0.0",
+    "mysql": "^2.18.1"
+  }
+}
