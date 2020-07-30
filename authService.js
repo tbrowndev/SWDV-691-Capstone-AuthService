@@ -7,17 +7,12 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cors = require('cors');
+const { json } = require('body-parser');
 
 
 // Configuration
-
 var connection;
-var db_config = {
-    host: "us-cdbr-east-02.cleardb.com",
-    user: "bf13fc36dcfd85",
-    password: "8d75886d",
-    database: "heroku_b4ce9bcf2319012"
-}
+const db_config = require('../db_config.json');
 
 app.use(bodyParser.urlencoded({ 'extended': 'true' }));
 app.use(bodyParser.json());
