@@ -7,12 +7,11 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var cors = require('cors');
-const { json } = require('body-parser');
 
 
 // Configuration
 var connection;
-const db_config = require('../db_config.json');
+const db_config = process.env.CLEARDB_DATABASE_URL;
 
 app.use(bodyParser.urlencoded({ 'extended': 'true' }));
 app.use(bodyParser.json());
@@ -54,8 +53,8 @@ function handleDisconnect() {
 handleDisconnect(); // starts database connection. 
 
 // Start app and database connection and listen on port 6254  
-app.listen(process.env.PORT || 6254);
-console.log("Auth Service listening on port  - ", (process.env.PORT || 6254));
+app.listen(process.env.AUTH_PORT || 6200);
+console.log("Auth Service listening on port  - ", (process.env.AUTH_PORT || 6200));
 
 //ADD NEW USER TO SYSTEM
 app.post('/auth/users', function (req, res) {
