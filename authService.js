@@ -11,7 +11,7 @@ var cors = require('cors');
 
 // Configuration
 var connection;
-const db_config = process.env.CLEARDB_DATABASE_URL;
+const db_config = require('../db_config.json');
 
 app.use(bodyParser.urlencoded({ 'extended': 'true' }));
 app.use(bodyParser.json());
@@ -61,22 +61,16 @@ app.post('/auth/users', function (req, res) {
 
     var non_user = req.body.non_user;
     try {
-        let new_user_sql = "INSERT INTO `users` (`name`, `email`, `phone`) VALUES (\"" + non_user.name + "\",\"" + non_user.email + "\"," + non_user.phone + ")";
-        connection.query(new_user_sql, function (err, result) {
-            if (err) { throw err; }
-            else {
-                registered_id = result.insertId;
-                encrypt(req.body.non_user_key).then(function (result) {
-                    let new_key_sql = "INSERT INTO `keys` (`userId`, `key`, `username`) VALUES (" + registered_id + ", \"" + result + "\",\"" + non_user.username + "\")";
-                    connection.query(new_key_sql, function (err, result) {
-                        if (err) { throw err; }
-                        else {
-                            console.log("New User Alert!");
-                            res.send({ registered_id });
-                        };
-                    });
-                });
-            }
+        encrypt(req.body.non_user_key).then(function (result) {
+            let new_user_sql = "CALL Add_new_user(\"" + non_user.name + "\",\"" + non_user.email + "\"," + non_user.phone +",\""+result+"\",\""+non_user.username+ "\")";
+            connection.query(new_user_sql, function (err, result) {
+                if (err) { throw err; }
+                else {
+                    let registered_user = result[0][0].user_id;
+                    console.log("New User Alert! "+registered_user);
+                    res.send({registered_user});
+                };
+            });
         });
     }
     catch (err) {
@@ -94,12 +88,12 @@ app.get('/auth/users', function (req, res) {
     console.log("Verifying user credentials.....");
 
     try {
-        let valid_user_sql = "SELECT `userId`, `key` FROM `keys` WHERE `username`= \"" + input_name + "\"";
+        let valid_user_sql = "SELECT `user_id`, `key` FROM `keys` WHERE `username`= \"" + input_name + "\"";
 
         connection.query(valid_user_sql, function (err, result) {
             if (err) { throw err }
             else {
-                if (result[0].key) {
+                if (result[0] != undefined) {
                     check(input_key, result[0].key).then(function (isValid) {
                         if (isValid) {
                             res.send({ "valid": true, "valid_id": result[0].userId });
