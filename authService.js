@@ -84,9 +84,6 @@ app.get('/auth/users', function (req, res) {
 
     var input_name = req.query.input_name;
     var input_key = req.query.input_key;
-
-    console.log("Verifying user credentials.....");
-
     try {
         let valid_user_sql = "SELECT `user_id`, `key` FROM `keys` WHERE `username`= \"" + input_name + "\"";
 
@@ -96,7 +93,7 @@ app.get('/auth/users', function (req, res) {
                 if (result[0] != undefined) {
                     check(input_key, result[0].key).then(function (isValid) {
                         if (isValid) {
-                            res.send({ "valid": true, "valid_id": result[0].userId });
+                            res.send({ "valid": true, "valid_id": result[0].user_id });
                         }
                         else {
                             res.send({ "valid": false, "valid_id": null });
